@@ -219,15 +219,15 @@
             }
         });
 
-async function downloadVCard() {
+        function downloadVCard() {
             const p = _d1 ? atob(_d1) : "";
             const e = _d2 ? atob(_d2) : "";
             const l = _d3 ? atob(_d3) : "";
+            //const g = _d4 ? atob(_d4) : "";
             const name = _dName ? atob(_dName) : "Contact";
             const n_field = _dN ? atob(_dN) : "N:;;;;";
+            // Decoded Line URL
             const lineUrl = _dLine ? atob(_dLine) : "";
-            const filename = `${name.replace(/\s+/g, '_')}.vcf`;
-            
             const vcard = `BEGIN:VCARD
 VERSION:3.0
 ${n_field}
@@ -238,46 +238,17 @@ TEL;TYPE=CELL:${p}
 EMAIL:${e}
 URL:${l}
 X-SOCIALPROFILE;type=line:${lineUrl}
-NOTE:Connect via Line: ${lineUrl} | Met at Safer Internet Day 2026.
+NOTE:Met at Safer Internet Day 2026. Expert in Responsible AI.
 END:VCARD`;
 
-            // 1. Detect In-App Browser (Line/FB/Instagram)
-            const ua = navigator.userAgent || navigator.vendor || window.opera;
-            const isInApp = (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Instagram") > -1) || (ua.indexOf("Line") > -1);
-
-            if (isInApp) {
-                alert("⚠️ ไม่สามารถบันทึกในแอปนี้ได้\n\nกรุณากดที่มุมขวาบน (3 จุด) แล้วเลือก 'Open in Browser' (เปิดในเบราว์เซอร์) เพื่อบันทึกรายชื่อ");
-                return;
-            }
-
-            // 2. Try Native Share API (Best for Mobile - iOS/Android)
-            // Requires HTTPS context
-            try {
-                const file = new File([vcard], filename, { type: 'text/vcard;charset=utf-8' });
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Save Contact',
-                        text: `Save ${name} to your contacts`
-                    });
-                    return; // If shared successfully, stop here
-                }
-            } catch (err) {
-                console.log('Sharing failed or not supported, falling back to download.', err);
-            }
-
-            // 3. Fallback: Classic Download (Desktop / Old Android)
-            const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+            const blob = new Blob([vcard], { type: 'text/vcard' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 100);
+            const newLink = document.createElement('a');
+            newLink.download = "Dr_Suppakrit.vcf";
+            newLink.textContent = "Save Contact";
+            newLink.href = url;
+            newLink.click();
         }
     </script>
 </body>
 </html>
-
